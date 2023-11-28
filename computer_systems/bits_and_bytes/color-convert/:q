@@ -1,0 +1,25 @@
+const hexRegEx = /(?<=#)([0-9a-fA-F])+/g
+
+process.stdin.setEncoding('utf8')
+
+const hex2dec = (xx) => {
+  xx = xx.toLowerCase().charCodeAt(0)
+
+  if (97 <= xx && xx <= 102)
+    return xx - 87
+  else return String.fromCodePoint(xx)
+}
+
+const hex2rgb = (match) => {
+  let rgb = 'rgb('
+
+  for (let i=0; i<match.length; i+=2) {
+    rgb += (hex2dec(match[i]) << 4) + hex2dec(match[i+1]) + ' '
+  }
+
+  return rgb
+}
+
+process.stdin.on('data', (chunk) => {
+  process.stdout.write(chunk.replaceAll(hexRegEx, hex2rgb))
+})

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <assert.h>
+
+struct block {
+  size_t size;
+  int free;
+};
+
+#define BLOCK_SIZE sizeof(struct block)
+
+void *myalloc(size_t size) {
+  static struct block *BSS = NULL;
+
+  if (BSS == NULL) {
+    BSS = sbrk(BLOCK_SIZE);
+
+    BSS->size = size;
+    BSS->free = 0;
+  }
+
+  struct block *heap = BSS;
+  for (heap=BSS; heap->size>0; heap+=BLOCK_SIZE+heap->size) {
+    if (heap->free) break;
+  }
+
+  if (!heap->size) heap = sbrk(BLOCK_SIZE + size);
+
+  heap->size = size;
+  heap->free = 0;
+
+  return heap+1;
+}
+
+void free(void *ptr) {
+  struct block *meta = ptr-BLOCK_SIZE;  
+
+  meta->free = 1;
+}
+
+int main() {
+  int *foo = myalloc(sizeof(int));
+  *foo = 42;
+
+  char *bar = myalloc(11);
+  memcpy(bar, "hello world", 11);
+
+  free(foo);
+
+  int *rab = myalloc(sizeof(int));
+  *rab = 24;
+
+  assert(foo==rab);
+}
+
