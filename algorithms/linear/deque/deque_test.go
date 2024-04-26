@@ -1,3 +1,4 @@
+// Tests Deque's doubly-linked list methods & functionality
 package deque
 
 import (
@@ -16,38 +17,38 @@ func TestNewDeque(t *testing.T) {
 func TestDequePushPop(t *testing.T) {
   d := New()
 
-  n := node.New("42")
-  d.Push(&n)
+  n := "42"
+  d.Push(n)
 
   if d.Head.Val != "42" || d.Size != 1 {
     t.Errorf("Empty Deque push failed: d.Head = %v, d.Size = %d", d.Head, d.Size)
   }
 
-  m := node.New("24") 
-  d.Push(&m)
+  m := "24"
+  d.Push(m)
   if d.Head.Val != "42" || d.Tail.Val != "24" || d.Size != 2 {
     t.Errorf("Deque push failed: d.Head = %v, d.Size = %d", d.Tail, d.Size)
   }
 
-  o := node.New("1337") 
-  d.Push(&o)
+  o := "1337"
+  d.Push(o)
   if d.Head.Val != "42" || d.Tail.Val != "1337" || d.Size != 3 {
     t.Errorf("Deque push failed: d.Head = %v, d.Size = %d", d.Tail, d.Size)
   }
 
   p := d.Pop() 
-  if p.Val != "1337" || d.Tail.Val != "24" || d.Size > 2  {
-    t.Errorf("Deque pop failed: p = %v, d.Size = %d", d.Tail, d.Size)
+  if p != "1337" || d.Tail.Val != "24" || d.Size > 2  {
+    t.Errorf("Deque pop failed: p = %v, d.Size = %d", p, d.Size)
   }
 
   q := d.Pop() 
-  if q.Val != "24" || d.Size > 1 {
-    t.Errorf("Deque pop failed: d.Head = %v, d.Size = %d", d.Head, d.Size)
+  if q != "24" || d.Size > 1 {
+    t.Errorf("Deque pop failed: d.Head = %v, d.Size = %d", q, d.Size)
   }
 
   r := d.Pop() 
-  if r.Val != "42" || d.Size > 0 {
-    t.Errorf("Deque pop failed: d.Head = %v, d.Size = %d", d.Head, d.Size)
+  if r != "42" || d.Size > 0 {
+    t.Errorf("Deque pop failed: d.Head = %v, d.Size = %d", r, d.Size)
   }
 
   s := d.Pop() 
@@ -73,11 +74,10 @@ func TestDequeShiftUnshift(t *testing.T) {
   }
 
   for _,c := range cases {
-    n := node.New(c.val)
-    d.Shift(&n)
+    d.Shift(c.val)
 
-    if d.Head.Val != n.Val || d.Size != c.size {
-      t.Errorf("d.Head = %v, wanted %v", d.Head, n)
+    if d.Head.Val != d.Head.Val || d.Size != c.size {
+      t.Errorf("d.Head = %v, wanted %v", d.Head, c.val)
     }
   }
 
@@ -92,7 +92,7 @@ func TestDequeShiftUnshift(t *testing.T) {
 
   for _, e := range cases {
     m := d.Unshift()
-    if m.Val != e.val || d.Size != e.size {
+    if m != e.val || d.Size != e.size {
       t.Errorf("d.Unshift() = %v, wanted %v", m, e)
     }
   }
@@ -111,12 +111,11 @@ func TestEnqueuDeque(t *testing.T) {
   d := New()
 
   for _,c := range cases {
-    n := node.New(c.val)
-    d.Enque(&n)
+    d.Enque(c.val)
 
     if d.Size != c.size || d.Tail.Val != c.val {
       t.Errorf("d.Enque(%v) = d.Size = %v, d.Tail = %v, wanted %v, %v",
-                n, d.Size, d.Tail, c.size, c.val)
+                c.val, d.Size, d.Tail, c.size, c.val)
     }
   }
 
@@ -131,7 +130,7 @@ func TestEnqueuDeque(t *testing.T) {
 
   for _,c := range cases {
     n := d.Deque() 
-    if d.Size != c.size || n.Val != c.val {
+    if d.Size != c.size || n != c.val {
       t.Errorf("d.Denque() = %v, d.Size = %v, wanted %v, %v",
                 n, d.Size, c.size, c.val)
     }
@@ -149,8 +148,8 @@ func TestDequeFind(t *testing.T) {
   cases := []int{0,3,6,9,12}
   for _,val := range cases {
     n := d.Find(val)
-    if n != nil && n.Val != val {
-      t.Errorf("d.Find(%d) = %v, want %v, got %v", val, n, val, n.Val)
+    if n != nil && n != val {
+      t.Errorf("d.Find(%d) = %v, want %v, got %v", val, n, val, n)
     }
   }
 }

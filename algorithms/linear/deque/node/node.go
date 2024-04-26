@@ -1,3 +1,4 @@
+// Node for Deque's doubly-linked list package
 package node
 
 type Node struct {
