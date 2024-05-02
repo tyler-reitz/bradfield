@@ -1,13 +1,13 @@
 import fs from "node:fs";
 
-const template = (_, i, arr) =>
+const node = (_, i, arr) =>
   arr.map((ch, j) => (i === j ? "?" : ch)).join("");
 
-const graphEntry = (acc, curr) => (tmpl) =>
+const vertice = (acc, curr) => (tmpl) =>
   acc[tmpl] ? acc[tmpl].push(curr) : (acc[tmpl] = [curr]);
 
 const toGraph = (acc, curr) => {
-  curr.split("").map(template).forEach(graphEntry(acc, curr));
+  curr.split("").map(node).forEach(vertice(acc, curr));
 
   return acc;
 };
@@ -18,15 +18,55 @@ const words = fs
   .reduce(toGraph, {});
 
 const ladder = (from, to) => {
-  const seen = new Set(from)
+  const seen = new Set()
   const queue = [from]
+  const path = []
 
   while (queue.length) {
-    for (const tmpl of queue.shift().split('').map(template)) {
-      console.log(tmpl, words[tmpl])
+    for (const tmpl of queue.shift().split('').map(node)) {
+      if (words[tmpl].includes(to)) {
+        path.push(words[tmpl])
+        return path
+      }
+
+
+      if (!seen.has(tmpl)) {
+        seen.add(tmpl)
+        queue.push(...words[tmpl])
+        path.push(words[tmpl])
+      }
     }
+  }
+
+  return []
+}
+
+const from = 'freak'
+const to = 'grant'
+
+const nodes = ladder(from, to)
+
+const tail = nodes.pop()
+
+const path = [to]
+
+let a = new Set(tail)
+
+while (!path.flat().includes(from)) {
+  for (const node of nodes) {
+    const b = new Set(node)
+    const x = a.intersection(b)
+
+    if (x.size) {
+      if (x.size > 1) {
+        path.push(from)
+      } else {
+        path.push(...x.values())
+      }
+      a = b 
+      break
+    } 
   }
 }
 
-ladder('head', 'tail')
-
+console.log(path.reverse().join(' -> '))
